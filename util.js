@@ -13,4 +13,6 @@ const slidingWindow = (arr, len) =>
     )
     .filter((p) => p.length == len);
 
-module.exports = { slidingWindow, range };
+const sum = (lst) => lst.reduce((acc, e) => acc + e, 0);
+
+module.exports = { slidingWindow, range, sum };
