@@ -15,4 +15,10 @@ const slidingWindow = (arr, len) =>
 
 const sum = (lst) => lst.reduce((acc, e) => acc + e, 0);
 
-module.exports = { slidingWindow, range, sum };
+function* chunks(arr, n) {
+  for (let i = 0; i < arr.length; i += n) {
+    yield arr.slice(i, i + n);
+  }
+}
+
+module.exports = { slidingWindow, range, sum, chunks };
