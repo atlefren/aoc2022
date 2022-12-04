@@ -21,4 +21,6 @@ function* chunks(arr, n) {
   }
 }
 
-module.exports = { slidingWindow, range, sum, chunks };
+const uniq = (lst) => [...new Set(lst)];
+
+module.exports = { slidingWindow, range, sum, chunks, uniq };
