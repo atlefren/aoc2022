@@ -1,22 +1,19 @@
-const { run } = require("../run");
+const { run, compare } = require("../run");
 const { chunks, range } = require("../util");
 const parse = (i) => i;
 
-const parseCrates = (i) => {
-  const numbers = i
-    .at(-1)
-    .split(" ")
-    .filter((e) => e !== "")
-    .map((e) => parseInt(e, 10));
-
-  const stacks = i
+const getStacks = (input) =>
+  input
     .slice(0, -1)
-    .map((l) =>
-      [...chunks(l.split(""), 4)].map((c) => (c[1] === " " ? undefined : c[1]))
+    .map((line) =>
+      [...chunks(line.split(""), 4)].map((c) =>
+        c[1] === " " ? undefined : c[1]
+      )
     )
     .reverse();
 
-  const meh = range(stacks.length).reduce(
+const rearrangeStacks = (numbers, stacks) =>
+  range(stacks.length).reduce(
     (acc, i) =>
       numbers.reduce(
         (a, num) => ({
@@ -28,11 +25,21 @@ const parseCrates = (i) => {
     numbers.reduce((acc, n) => ({ ...acc, [n]: [] }), {})
   );
 
-  return Object.keys(meh).reduce(
-    (acc, k) => ({ ...acc, [k]: meh[k].filter((e) => e !== undefined) }),
+const cleanupStacks = (stacks) =>
+  Object.keys(stacks).reduce(
+    (acc, k) => ({ ...acc, [k]: stacks[k].filter((e) => e !== undefined) }),
     {}
   );
-};
+
+const getCrateNumbers = (input) =>
+  input
+    .at(-1)
+    .split(" ")
+    .filter((e) => e !== "")
+    .map((e) => parseInt(e, 10));
+
+const parseCrates = (input) =>
+  cleanupStacks(rearrangeStacks(getCrateNumbers(input), getStacks(input)));
 
 const idexes = ["num", "from", "to"];
 const parseMove = (move) =>
@@ -42,40 +49,36 @@ const parseMove = (move) =>
     .filter((e) => !isNaN(e))
     .reduce((acc, e, i) => ({ ...acc, [idexes[i]]: e }), {});
 
-const transformInput = (i) => {
-  const s = i.indexOf("");
-  return {
-    crates: parseCrates(i.slice(0, s)),
-    moves: i.slice(s + 1).map(parseMove),
-  };
-};
+const getCrates = (input) => parseCrates(input.slice(0, input.indexOf("")));
+const getMoves = (input) => input.slice(input.indexOf("") + 1).map(parseMove);
 
-const executeMove = (crates, move) => {
-  for (let n = 0; n < move.num; n++) {
-    crates[move.to].push(crates[move.from].pop());
-  }
-  return crates;
-};
+const copyTo = (crates, from, to, num, moveSingle) =>
+  moveSingle
+    ? [...crates[to], ...crates[from].slice(-num).reverse()]
+    : [...crates[to], ...crates[from].slice(-num)];
 
-const executeMove2 = (crates, move) => {
-  const moved = [];
-  for (let n = 0; n < move.num; n++) {
-    moved.push(crates[move.from].pop());
-  }
-  crates[move.to] = [...crates[move.to], ...moved.reverse()];
-  return crates;
-};
+const executeMove = (moveSingle) => (crates, move) => ({
+  ...crates,
+  [move.from]: crates[move.from].slice(0, -move.num),
+  [move.to]: copyTo(crates, move.from, move.to, move.num, moveSingle),
+});
 
-const runCrane = (input, execute) => {
-  const { crates, moves } = transformInput(input);
-  const a = moves.reduce(execute, crates);
-  return Object.keys(a)
-    .map((k) => a[k].at(-1))
+const getTopCrates = (crates) =>
+  Object.keys(crates)
+    .map((key) => crates[key].at(-1))
     .join("");
-};
 
-const task1 = (input) => runCrane(input, executeMove);
+const runCrane = (input, execute) =>
+  getTopCrates(getMoves(input).reduce(execute, getCrates(input)));
 
-const task2 = (input) => runCrane(input, executeMove2);
+const task1 = (input) => runCrane(input, executeMove(true));
+
+const task2 = (input) => runCrane(input, executeMove(false));
 
 run(parse, task1, task2, true);
+compare(parse, task1, task2, {
+  task1Test: "CMZ",
+  task1: "GFTNRBZPF",
+  task2Test: "MCD",
+  task2: "VRQWPDSGP",
+});
