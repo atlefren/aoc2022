@@ -18,17 +18,14 @@ const rearrangeStacks = (numbers, stacks) =>
       numbers.reduce(
         (a, num) => ({
           ...a,
-          [num]: [...a[num], stacks[i][num - 1]],
+          [num]:
+            stacks[i][num - 1] !== undefined
+              ? [...a[num], stacks[i][num - 1]]
+              : a[num],
         }),
         acc
       ),
     numbers.reduce((acc, n) => ({ ...acc, [n]: [] }), {})
-  );
-
-const cleanupStacks = (stacks) =>
-  Object.keys(stacks).reduce(
-    (acc, k) => ({ ...acc, [k]: stacks[k].filter((e) => e !== undefined) }),
-    {}
   );
 
 const getCrateNumbers = (input) =>
@@ -39,7 +36,7 @@ const getCrateNumbers = (input) =>
     .map((e) => parseInt(e, 10));
 
 const parseCrates = (input) =>
-  cleanupStacks(rearrangeStacks(getCrateNumbers(input), getStacks(input)));
+  rearrangeStacks(getCrateNumbers(input), getStacks(input));
 
 const idexes = ["num", "from", "to"];
 const parseMove = (move) =>
