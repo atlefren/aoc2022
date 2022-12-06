@@ -1,7 +1,4 @@
-const range = (len, from) =>
-  from !== undefined && len !== undefined
-    ? [...Array(len).keys()].map((i) => i + from)
-    : [...Array(len).keys()];
+const range = (len, from = 0) => [...Array(len).keys()].map((i) => i + from);
 
 const slidingWindow = (arr, len) =>
   arr

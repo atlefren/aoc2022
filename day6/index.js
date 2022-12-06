@@ -1,4 +1,4 @@
-const { run, compare } = require("../run");
+const { run } = require("../run");
 const { range, isUnique } = require("../util");
 
 const getLastN = (input, i, num) =>
