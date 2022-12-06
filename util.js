@@ -1,4 +1,7 @@
-const range = (len) => [...Array(len).keys()];
+const range = (len, from) =>
+  from !== undefined && len !== undefined
+    ? [...Array(len).keys()].map((i) => i + from)
+    : [...Array(len).keys()];
 
 const slidingWindow = (arr, len) =>
   arr
@@ -23,4 +26,6 @@ function* chunks(arr, n) {
 
 const uniq = (lst) => [...new Set(lst)];
 
-module.exports = { slidingWindow, range, sum, chunks, uniq };
+const isUnique = (lst) => new Set(lst).size === lst.length;
+
+module.exports = { slidingWindow, range, sum, chunks, uniq, isUnique };
