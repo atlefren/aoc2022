@@ -21,8 +21,30 @@ function* chunks(arr, n) {
   }
 }
 
+const getNeighbours = (map, [i, j]) =>
+  [
+    [i - 1, j],
+    [i + 1, j],
+    [i, j - 1],
+    [i, j + 1],
+  ].filter(
+    (pos) =>
+      pos[0] >= 0 &&
+      pos[0] < map.length &&
+      pos[1] >= 0 &&
+      pos[1] < map[pos[0]].length
+  );
+
 const uniq = (lst) => [...new Set(lst)];
 
 const isUnique = (lst) => new Set(lst).size === lst.length;
 
-module.exports = { slidingWindow, range, sum, chunks, uniq, isUnique };
+module.exports = {
+  slidingWindow,
+  range,
+  sum,
+  chunks,
+  uniq,
+  isUnique,
+  getNeighbours,
+};
